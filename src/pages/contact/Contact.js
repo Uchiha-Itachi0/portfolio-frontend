@@ -12,7 +12,7 @@ import SectionHeading from "../../components/SectionHeading/SectionHeading";
 const ModifiedMovingTextContainer = styled(MovingTextContainer)`
 
 @media only screen and (max-width: 336px){
-    padding-left: 150%;
+    padding-left: 200%;
 }
 `;
 const Contact = (props) => {

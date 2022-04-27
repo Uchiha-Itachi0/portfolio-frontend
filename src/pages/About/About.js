@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import SectionHeading from '../../components/SectionHeading/SectionHeading'
 import AboutStyle from './AboutStyle';
 import axios from "../../axios/axiosInstance"
+import Spinner from "../../components/Spinner/Spinner"
 
 
 const aboutAnimate = {
@@ -34,14 +35,18 @@ const aboutAnimate = {
 const About = () => {
 
     const [about, setAbout] = useState("");
+    const [showLoader, setLoader] = useState(false);
 
     useEffect(() => {
         const fetchAbout = async () => {
+            setLoader(true);
             try {
                 const data = await axios.get("about");
                 setAbout(data.data.about[0].about);
+                setLoader(false);
             }
             catch (error) {
+                setLoader(false);
                 alert("Failed to fetch the data");
             }
 
@@ -59,9 +64,12 @@ const About = () => {
             exit="exit"
             variants={aboutAnimate}>
             <SectionHeading isSecondary>ABOUT</SectionHeading>
-            <p className="about_content">
-                {about}
-            </p>
+            {
+                showLoader ? <Spinner />
+                    :
+                    <p className="about_content">
+                        {about}
+                    </p>}
             <p className="about_footer">Interested in working togather</p>
             <a href="mailto:anubhav008shukla@gmail.com" className="about_link">Drop a note</a>
         </AboutStyle>

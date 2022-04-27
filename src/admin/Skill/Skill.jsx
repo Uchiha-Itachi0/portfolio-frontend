@@ -7,7 +7,8 @@ import SkillBox from '../../components/SkillBox/SkillBox';
 import SearchInput from '../../components/InputField/InputField';
 import axios from "../../axios/axiosInstance"
 import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
+import Spinner from "../../components/Spinner/Spinner";
 
 const skillAnimate = {
     initial: {
@@ -46,6 +47,7 @@ const AdminSkill = () => {
 
     const { isAuth } = useSelector(state => state.authentication);
     const navigate = useNavigate();
+    const [showLoader, setLoader] = useState(false);
 
     const [title, setTitle] = useState("");
     const [percentage, setPercentage] = useState("");
@@ -54,11 +56,14 @@ const AdminSkill = () => {
     const [editId, setEditId] = useState("");
 
     const fetchSkills = async () => {
+        setLoader(true);
         try {
             const data = await axios.get(`${process.env.REACT_APP_ADMIN}skills`, header)
             setSkills(data.data.skills);
+            setLoader(false);
         }
         catch (error) {
+            setLoader(false);
             alert("FAILEd TO LOAD DATA");
         }
     }
@@ -81,16 +86,19 @@ const AdminSkill = () => {
     }
 
     const createHandler = async () => {
+        setLoader(true);
         try {
             await axios.post(`${process.env.REACT_APP_ADMIN}skill`, {
                 title,
                 percentage,
             }, header);
             fetchSkills();
-            alert("Successfully updated")
+            alert("Successfully updated");
+            setLoader(false);
 
         }
         catch (error) {
+            setLoader(false);
             alert("FAILED TO UPDATE");
         }
 
@@ -114,20 +122,23 @@ const AdminSkill = () => {
 
     }
     const deleteButtonHandler = async (id) => {
+        setLoader(true);
         try {
             await axios.post(`${process.env.REACT_APP_ADMIN}delete`, {
                 id
             }, header)
             fetchSkills()
             alert("Successfully deleted")
-
+            setLoader(false);
         }
         catch (error) {
+            setLoader(false);
             alert("FAILED TO DELETE");
         }
     }
 
     const updateHandler = async () => {
+        setLoader(true);
         try {
             await axios.post(`${process.env.REACT_APP_ADMIN}edit`, {
                 id: editId,
@@ -135,9 +146,11 @@ const AdminSkill = () => {
                 percentage
             }, header);
             fetchSkills();
-            alert("Successfully updated")
+            alert("Successfully updated");
+            setLoader(false);
         }
         catch (error) {
+            setLoader(false);
             alert("Failed to update");
         }
 
@@ -172,19 +185,22 @@ const AdminSkill = () => {
             }
 
 
-            <div className="skill_box_container">
-                {skills.map((value, index) => {
-                    return <SkillBox
-                        key={value._id}
-                        title={value.title}
-                        index_number={index + 1}
-                        percentage={value.percentage}
-                        id={value._id}
-                        edit_button_handler={(title, percentage, id) => editButtonHandler(title, percentage, id)}
-                        delete_button_handler={(id) => deleteButtonHandler(id)}
-                    />
-                })}
-            </div>
+            {
+                showLoader ? <Spinner />
+                    :
+                    <div className="skill_box_container">
+                        {skills.map((value, index) => {
+                            return <SkillBox
+                                key={value._id}
+                                title={value.title}
+                                index_number={index + 1}
+                                percentage={value.percentage}
+                                id={value._id}
+                                edit_button_handler={(title, percentage, id) => editButtonHandler(title, percentage, id)}
+                                delete_button_handler={(id) => deleteButtonHandler(id)}
+                            />
+                        })}
+                    </div>}
         </SkillStyle>
     )
 }

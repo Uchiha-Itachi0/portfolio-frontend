@@ -53,40 +53,40 @@ margin: -7em auto 0 auto;
 `;
 const homeAnimate = {
   initial: {
-      x: "-100vw",
-      opacity: 0,
-      transition: {
-          duration: 1,
-          type: "spring"
-      }
+    x: "-100vw",
+    opacity: 0,
+    transition: {
+      duration: 1,
+      type: "spring"
+    }
   },
   animate: {
-      x: "0",
-      opacity: 1,
-      transition: {
-          duration: 1,
-          type: "spring"
-      }
+    x: "0",
+    opacity: 1,
+    transition: {
+      duration: 1,
+      type: "spring"
+    }
   },
   exit: {
-      x: "100vw",
-      opacity: 0,
-      transition: {
-          duration: 1,
-          type: "spring"
-      }
+    x: "100vw",
+    opacity: 0,
+    transition: {
+      duration: 1,
+      type: "spring"
+    }
   }
 }
 
 const Home = () => {
   return (
     <>
-      <HomeStyle as={motion.div} 
-       initial="initial"
-       animate="animate"
-       exit="exit"
-       variants={homeAnimate}
-       backgroundImg={MyImg}>
+      <HomeStyle as={motion.div}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        variants={homeAnimate}
+        backgroundImg={MyImg}>
         <div className="home_img_container"></div>
         <div className="home_small_heading_container">
           <h1>I am <span>FullStack Developer</span></h1>
@@ -100,7 +100,7 @@ const Home = () => {
           <h1>SHUKLA</h1>
         </div>
       </HomeStyle>
-      <ModifiedTwoCircleButton className="home_two_circle_button" link="mailto:anubhav008shukla" 
+      <ModifiedTwoCircleButton className="home_two_circle_button" link="mailto:anubhav008shukla"
         text="HIRE ME"
       />
     </>

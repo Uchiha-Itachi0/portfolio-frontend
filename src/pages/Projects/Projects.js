@@ -6,6 +6,7 @@ import Tag from '../../components/Tag/Tag'
 import ProjectCard from '../../components/ProjectCard.js/ProjectCard'
 import axios from "../../axios/axiosInstance"
 import { motion } from 'framer-motion'
+import Spinner from "../../components/Spinner/Spinner"
 
 // Initialy the selected tag will be an empty array
 const selectedTag = [];
@@ -40,28 +41,35 @@ const Projects = () => {
 
 
     const [searchValue, setSearchValue] = useState("")
+    const [showLoader, setLoader] = useState(false);
 
     const [project, setProject] = useState([])
     const [filterData, setFilterData] = useState([]);
     const [tags, setTags] = useState([]);
 
     const fetchProject = async () => {
+        setLoader(true);
         try {
             const data = await axios.get("/project")
             setProject(data.data.data);
             setFilterData(data.data.data)
+            setLoader(false);
         }
         catch (error) {
+            setLoader(false);
             alert("Couldn't get project");
         }
 
     }
     const fetchTags = async () => {
+        setLoader(true);
         try {
             const data = await axios.get("/tags")
             setTags(data.data.tagData.tags);
+            setLoader(false);
         }
         catch (error) {
+            setLoader(false);
             alert("Failed to fetch the tag data")
         }
     }
@@ -128,17 +136,21 @@ const Projects = () => {
                     </Tag>
                 })}
             </div>
-            <div className="project_project_container">
-                {filterData.map((value, index) => {
-                    return <ProjectCard key={value._id}
-                        project_title={value.title}
-                        project_desc={value.desc}
-                        project_number={index + 1}
-                        button_link={value.link}
-                    />
 
-                })}
-            </div>
+            {
+                showLoader ? <Spinner />
+                    :
+                    <div className="project_project_container">
+                        {filterData.map((value, index) => {
+                            return <ProjectCard key={value._id}
+                                project_title={value.title}
+                                project_desc={value.desc}
+                                project_number={index + 1}
+                                button_link={value.link}
+                            />
+
+                        })}
+                    </div>}
 
 
 

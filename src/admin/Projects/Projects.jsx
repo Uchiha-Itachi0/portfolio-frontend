@@ -8,7 +8,8 @@ import Button from "../../components/Button/Button"
 import axios from "../../axios/axiosInstance"
 import { motion } from 'framer-motion'
 import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
+import Spinner from '../../components/Spinner/Spinner'
 
 
 // Initialy the selected tag will be an empty array
@@ -50,6 +51,7 @@ const AdminProjects = () => {
 
     const { isAuth } = useSelector(state => state.authentication);
     const navigate = useNavigate();
+    const [showLoader, setLoader] = useState(false);
     const [project, setProject] = useState([])
     const [searchValue, setSearchValue] = useState("")
     const [filterData, setFilterData] = useState([]);
@@ -63,31 +65,37 @@ const AdminProjects = () => {
     const [writeTags, setWriteTags] = useState("");
 
     const fetchProject = async () => {
+        setLoader(true);
         try {
             const data = await axios.get(`${process.env.REACT_APP_ADMIN}projects`, header)
             setProject(data.data.data);
             setFilterData(data.data.data)
+            setLoader(false);
         }
         catch (error) {
+            setLoader(false);
             alert("Couldn't get project");
         }
     }
 
     const fetchTags = async () => {
+        setLoader(true);
         try {
             const data = await axios.get(`${process.env.REACT_APP_ADMIN}tags`, header)
             setTags(data.data.tagData.tags);
+            setLoader(false);
         }
         catch (error) {
+            setLoader(false);
             alert("Failed to fetch the tag data")
         }
     }
     useEffect(() => {
-        if(isAuth){
+        if (isAuth) {
             fetchProject();
             fetchTags();
         }
-        else{
+        else {
             navigate("/")
         }
 
@@ -171,19 +179,23 @@ const AdminProjects = () => {
         }
     }
     const deleteButtonHandler = async (id) => {
+        setLoader(true);
         try {
             await axios.post(`${process.env.REACT_APP_ADMIN}project-delete`, {
                 id
             }, header)
             fetchProject();
             alert("Successfully deleted the data")
+            setLoader(false);
         }
         catch (error) {
+            setLoader(false);
             alert("Failer to delete the data");
         }
     }
 
     const createHandler = async () => {
+        setLoader(true);
         try {
             await axios.post(`${process.env.REACT_APP_ADMIN}project`, {
                 title,
@@ -192,14 +204,17 @@ const AdminProjects = () => {
                 tag
             }, header)
             fetchProject();
-            alert("Successfully created")
+            alert("Successfully created");
+            setLoader(false);
         }
         catch (error) {
+            setLoader(false);
             alert("Failed to create project")
         }
     }
 
     const updateHandler = async () => {
+        setLoader(true);
         try {
             await axios.post(`${process.env.REACT_APP_ADMIN}project-edit`, {
                 id: editId,
@@ -210,20 +225,25 @@ const AdminProjects = () => {
             }, header);
             fetchProject();
             alert("Successfully updated")
+            setLoader(false);
         } catch (error) {
+            setLoader(false);
             alert("Failed to update")
         }
     }
 
     const updateTags = async () => {
+        setLoader(true);
         try {
             await axios.post(`${process.env.REACT_APP_ADMIN}tags`, {
                 tags: writeTags
             }, header)
             fetchTags();
-            alert("Successfully updated the tags")
+            alert("Successfully updated the tags");
+            setLoader(false);
         }
         catch (error) {
+            setLoader(false);
             alert("Failed to update the tags");
         }
     }
@@ -280,22 +300,25 @@ const AdminProjects = () => {
                     </Tag>
                 })}
             </div>
-            <div className="project_project_container">
-                {filterData.map((value, index) => {
-                    return <ProjectCard key={value._id}
-                        project_title={value.title}
-                        project_desc={value.desc}
-                        project_number={index + 1}
-                        button_link={value.link}
-                        showButton
-                        id={value._id}
-                        tag={value.tag}
-                        edit_button_handler={(title, link, desc, tag, id) => editButtonHandler(title, link, desc, tag, id)}
-                        delete_button_handler={(id) => deleteButtonHandler(id)}
-                    />
+            {
+                showLoader ? <Spinner />
+                    :
+                    <div className="project_project_container">
+                        {filterData.map((value, index) => {
+                            return <ProjectCard key={value._id}
+                                project_title={value.title}
+                                project_desc={value.desc}
+                                project_number={index + 1}
+                                button_link={value.link}
+                                showButton
+                                id={value._id}
+                                tag={value.tag}
+                                edit_button_handler={(title, link, desc, tag, id) => editButtonHandler(title, link, desc, tag, id)}
+                                delete_button_handler={(id) => deleteButtonHandler(id)}
+                            />
 
-                })}
-            </div>
+                        })}
+                    </div>}
 
 
 

@@ -7,6 +7,7 @@ import axios from "../../axios/axiosInstance";
 import { useDispatch, useSelector } from "react-redux"
 import { authentication } from '../../redux/action/user'
 import { useNavigate } from 'react-router-dom';
+import Spinner from '../../components/Spinner/Spinner';
 
 const Login = (props) => {
 
@@ -23,7 +24,7 @@ const Login = (props) => {
     }, [dispatch]);
 
     const { isAuth } = useSelector(state => state.authentication);
-
+    const [showLoader, setLoader] = useState(false);
     const [email, setemail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -35,21 +36,25 @@ const Login = (props) => {
     };
 
     const buttonClickedHandler = async () => {
+        setLoader(true);
         try {
             const data = await axios.post(`${process.env.REACT_APP_ADMIN}login`, {
                 email,
                 password
             });
             if (data.status !== 200) {
-                alert("Failed to Login. Check your email and password")
+                setLoader(false);
+                alert("Failed to Login. Check your email and password");
             }
             localStorage.setItem("token", data.data.token);
             dispatch(authentication(true));
-            alert("Logged in successfully")
+            setLoader(false);
+            alert("Logged in successfully");
             navigate("/")
 
         }
         catch (error) {
+            setLoader(false);
             alert(error.message, error.status)
 
         }
@@ -71,7 +76,10 @@ const Login = (props) => {
                             text="Log out" className="logout_button" />
                         :
                         <>
-                            <SectionHeading isSecondary>LOGIN</SectionHeading>
+                            {
+                                showLoader ? <Spinner />
+                                    :
+                                    <SectionHeading isSecondary>LOGIN</SectionHeading>}
                             <form className="login_form">
                                 <InputField input_type="text" placeholder="email"
                                     inputchange={(value) => emailHandler(value)} value={email} />

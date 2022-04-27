@@ -1,17 +1,20 @@
-import React from "react"
+import { React, lazy, Suspense } from "react"
 import NavBar from "./components/NavBar/NavBar";
 import Home from "./pages/Home/Home";
-import About from "./pages/About/About"
-import Contact from "./pages/contact/Contact";
-import AdminAbout from "./admin/About/About";
-import AdminSkill from "./admin/Skill/Skill";
-import AdminProjects from "./admin/Projects/Projects";
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import Skill from "./pages/Skill/Skill";
-import Projects from "./pages/Projects/Projects";
-import Login from "./pages/Login/login";
 import { AnimatePresence } from "framer-motion";
+import Spinner from "./components/Spinner/Spinner";
+
 const App = () => {
+  const About = lazy(() => import("./pages/About/About"));
+  const Skill = lazy(() => import("./pages/Skill/Skill"));
+  const Projects = lazy(() => import("./pages/Projects/Projects"));
+  const Contact = lazy(() => import("./pages/contact/Contact"));
+  const Login = lazy(() => import("./pages/Login/login"));
+  const AdminAbout = lazy(() => import("./admin/About/About"));
+  const AdminSkill = lazy(() => import("./admin/Skill/Skill"));
+  const AdminProjects = lazy(() => import("./admin/Projects/Projects"));
+
   return (
     <>
       <BrowserRouter>
@@ -19,16 +22,46 @@ const App = () => {
           <NavBar />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/skill" element={<Skill />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path={`${process.env.REACT_APP_ADMIN}`} element={<Login />} />
-            <Route path={`${process.env.REACT_APP_ADMIN}about`} element={<AdminAbout />} />
-            <Route path={`${process.env.REACT_APP_ADMIN}skills`} element={<AdminSkill />} />
-            <Route path={`${process.env.REACT_APP_ADMIN}projects`} element={<AdminProjects />} />
+            <Route path="/about" element={
+              <Suspense fallback={<Spinner />}>
+                <About />
+              </Suspense>
+            } />
+            <Route path="/skill" element={
+              <Suspense fallback={<Spinner />}>
+                <Skill />
+              </Suspense>
+            } />
+            <Route path="/projects" element={
+              <Suspense fallback={<Spinner />}>
+                <Projects />
+              </Suspense>
+            } />
+            <Route path={`${process.env.REACT_APP_ADMIN}`} element={
+              <Suspense fallback={<Spinner />}>
+                <Login />
+              </Suspense>
+            } />
+            <Route path={`${process.env.REACT_APP_ADMIN}about`} element={
+              <Suspense fallback={<Spinner />}>
+                <AdminAbout />
+              </Suspense>
+            } />
+            <Route path={`${process.env.REACT_APP_ADMIN}skills`} element={
+              <Suspense fallback={<Spinner />}>
+                <AdminSkill />
+              </Suspense>
+            } />
+            <Route path={`${process.env.REACT_APP_ADMIN}projects`} element={
+              <Suspense fallback={<Spinner />}>
+                <AdminProjects />
+              </Suspense>
+            } />
             <Route path="*" element={<Home />} />
           </Routes>
-          <Contact />
+          <Suspense fallback={<Spinner />}>
+            <Contact />
+          </Suspense>
         </AnimatePresence>
       </BrowserRouter>
 

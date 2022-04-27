@@ -6,6 +6,7 @@ import AboutStyle from './AboutStyle'
 import axios from "../../axios/axiosInstance";
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import Spinner from "../../components/Spinner/Spinner"
 
 const aboutAnimate = {
     initial: {
@@ -39,7 +40,9 @@ const AdminAbout = () => {
     const navigate = useNavigate();
 
     const [about, setAbout] = useState("");
+    const [showLoader, setLoader] = useState(false);
     const fetchAbout = async () => {
+        setLoader(true);
         try {
             const data = await axios.get(`${process.env.REACT_APP_ADMIN}about`, {
                 headers: {
@@ -47,8 +50,10 @@ const AdminAbout = () => {
                 }
             });
             setAbout((data.data.about[0].about));
+            setLoader(false);
         }
         catch (error) {
+            setLoader(false);
             alert(error.message);
         }
 
@@ -64,6 +69,7 @@ const AdminAbout = () => {
     }, [isAuth, navigate]);
 
     const editHandler = async () => {
+        setLoader(true);
         try {
             await axios.post(`${process.env.REACT_APP_ADMIN}about`, {
                 about
@@ -72,9 +78,11 @@ const AdminAbout = () => {
                     Authorization: `Bearer ${localStorage.getItem("token")}`
                 }
             });
+            setLoader(false);
             alert("Updated Successfully");
         }
         catch (error) {
+            setLoader(false);
             alert("Failed to update");
         }
 
@@ -94,7 +102,11 @@ const AdminAbout = () => {
             <div className="admin_about_controller">
                 <Button clickHandler={editHandler}>UPDATE</Button>
             </div>
-            <textarea onChange={(e) => changeHandler(e)} value={about}></textarea>
+            {
+                showLoader ? <Spinner />
+                : 
+                <textarea onChange={(e) => changeHandler(e)} value={about}></textarea>
+            }
             <p className="about_footer">Interested in working togather</p>
             <a href="mailto:anubhav008shukla@gmail.com" className="about_link">Drop a note</a>
         </AboutStyle>
