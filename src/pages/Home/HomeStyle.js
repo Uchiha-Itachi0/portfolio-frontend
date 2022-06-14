@@ -10,13 +10,13 @@ overflow: hidden;
 
     .home_img_container{
         width: max(15vw, 200px);
-        height: max(25vw, 300px);
+        height: max(15vw, 300px);
         background: ${props => `url(${props.backgroundImg}) center center no-repeat`};
         background-size: cover;
         position: absolute;
         left: 20%;
         top: 5%;
-        border-radius: 30px;
+        border-radius: 50%;
     }
 
     .home_small_heading_container{
